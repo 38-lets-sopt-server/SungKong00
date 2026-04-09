@@ -9,6 +9,8 @@ import org.sopt.repository.PostRepository;
 
 import java.util.List;
 
+import static org.sopt.validator.PostValidator.validateCreatePostRequest;
+
 public class PostService {
     private final PostRepository postRepository = new PostRepository();
 
@@ -18,13 +20,7 @@ public class PostService {
     // 글쓰기 화면에서 "완료" 버튼을 누르면 이 메서드가 호출돼요
     public CreatePostResponse createPost(CreatePostRequest request) {
         try {
-            // 글쓰기 화면설계서: 제목은 필수, 최대 50자
-            if (request.title == null || request.title.isBlank()) {
-                throw new IllegalArgumentException("제목은 필수입니다!");
-            }
-            if (request.content == null || request.content.isBlank()) {
-                throw new IllegalArgumentException("내용은 필수입니다!");
-            }
+            validateCreatePostRequest(request.title, request.content);
             String createdAt = java.time.LocalDateTime.now().toString();
             Post post = new Post(nextId++, request.title, request.content, request.author, createdAt);
             postRepository.save(post);
