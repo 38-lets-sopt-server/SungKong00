@@ -4,6 +4,7 @@ import org.sopt.domain.Post;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.exception.post.PostNotFoundException;
 import org.sopt.repository.PostRepository;
 
 import java.util.List;
@@ -39,6 +40,9 @@ public class PostService {
     // 자유게시판 목록 화면에서 호출돼요
     public List<PostResponse> getAllPosts() {
 
+        if (postRepository.findAll().isEmpty()) {
+            throw new PostNotFoundException();
+        }
         return postRepository.findAll().stream()
                 .map(PostResponse::new)
                 .toList();
@@ -47,8 +51,11 @@ public class PostService {
     // READ - 단건 📝 과제
     // 목록에서 특정 게시글을 탭하면 호출돼요 (게시글 상세 화면)
     public PostResponse getPost(Long id) {
-
-        return postRepository.findById(id) != null ? new PostResponse(postRepository.findById(id)) : null;
+        if (id == null || id <= 0) {
+            throw new PostNotFoundException();
+        } else {
+            return new PostResponse(postRepository.findById(id));
+        }
     }
 
     // UPDATE 📝 과제
@@ -60,7 +67,7 @@ public class PostService {
                 post.update(newTitle, newContent);
                 System.out.println("✅ 게시글 수정 완료!");
             } else {
-                System.out.println("🚫 해당 게시글을 찾을 수 없습니다.");
+               throw new PostNotFoundException();
             }
     }
 
@@ -71,7 +78,7 @@ public class PostService {
         if (postRepository.deleteById(id)) {
             System.out.println("✅ 게시글 삭제 완료!");
         } else {
-            System.out.println("🚫 해당 게시글을 찾을 수 없습니다.");
+            throw new PostNotFoundException();
         }
     }
 }

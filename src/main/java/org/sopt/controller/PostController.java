@@ -3,8 +3,11 @@ package org.sopt.controller;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.exception.CustomException;
+import org.sopt.exception.post.PostNotFoundException;
 import org.sopt.service.PostService;
 
+import javax.swing.undo.CannotUndoException;
 import java.util.List;
 
 public class PostController {
@@ -21,21 +24,39 @@ public class PostController {
 
     // GET /posts 📝 과제
     public List<PostResponse> getAllPosts() {
-        return postService.getAllPosts();
+        try {
+            return postService.getAllPosts();
+        } catch (CustomException e) {
+            System.out.println("🚫 입력 오류: " + e.getMessage());
+            return List.of();
         }
+    }
 
     // GET /posts/{id} 📝 과제
     public PostResponse getPost(Long id) {
-        return postService.getPost(id);
+        try {
+            return postService.getPost(id);
+        } catch (CannotUndoException e) {
+            System.out.println("🚫 입력 오류: " + e.getMessage());
+            return null;
+        }
     }
 
     // PUT /posts/{id} 📝 과제
     public void updatePost(Long id, String newTitle, String newContent) {
+        try {
             postService.updatePost(id, newTitle, newContent);
+        } catch (CustomException e) {
+            System.out.println("🚫 입력 오류: " + e.getMessage());
+        }
     }
 
     // DELETE /posts/{id} 📝 과제
     public void deletePost(Long id) {
-        postService.deletePost(id);
+        try {
+            postService.deletePost(id);
+        } catch (CustomException e) {
+            System.out.println("🚫 입력 오류: " + e.getMessage());
+        }
     }
 }
