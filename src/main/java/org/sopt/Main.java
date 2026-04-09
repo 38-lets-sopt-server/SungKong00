@@ -1,15 +1,14 @@
 package org.sopt;
-import org.sopt.controller.PostController;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.controller.PostController;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // 클라이언트는 Controller만 알면 돼요. Service도 Repository도 몰라도 돼요.
         PostController postController = new PostController();
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
