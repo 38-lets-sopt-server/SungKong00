@@ -1,62 +1,61 @@
 package org.sopt.controller;
 
 import org.sopt.dto.request.CreatePostRequest;
+import org.sopt.dto.response.ApiResponse;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.CustomException;
-import org.sopt.exception.post.PostNotFoundException;
 import org.sopt.service.PostService;
 
-import javax.swing.undo.CannotUndoException;
 import java.util.List;
 
 public class PostController {
     private final PostService postService = new PostService();
 
     // POST /posts
-    public CreatePostResponse createPost(CreatePostRequest request) {
+    public ApiResponse<CreatePostResponse> createPost(CreatePostRequest request) {
         try {
-            return postService.createPost(request);
-        } catch (IllegalArgumentException e) {
-            return new CreatePostResponse(null, "🚫 " + e.getMessage());
+            return ApiResponse.success(postService.createPost(request));
+        } catch (CustomException e) {
+            return ApiResponse.failure(e);
         }
     }
 
     // GET /posts 📝 과제
-    public List<PostResponse> getAllPosts() {
+    public ApiResponse<List<PostResponse>> getAllPosts() {
         try {
-            return postService.getAllPosts();
+            return ApiResponse.success(postService.getAllPosts());
         } catch (CustomException e) {
-            System.out.println("🚫 입력 오류: " + e.getMessage());
-            return List.of();
+            return ApiResponse.failure(e);
         }
     }
 
     // GET /posts/{id} 📝 과제
-    public PostResponse getPost(Long id) {
-        try {
-            return postService.getPost(id);
-        } catch (CannotUndoException e) {
-            System.out.println("🚫 입력 오류: " + e.getMessage());
-            return null;
+    public ApiResponse<PostResponse> getPost(Long id) {
+      try {
+            return ApiResponse.success(postService.getPost(id));
+        } catch (CustomException e) {
+            return ApiResponse.failure(e);
         }
     }
 
     // PUT /posts/{id} 📝 과제
-    public void updatePost(Long id, String newTitle, String newContent) {
+    public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent) {
         try {
             postService.updatePost(id, newTitle, newContent);
+            return ApiResponse.success();
         } catch (CustomException e) {
-            System.out.println("🚫 입력 오류: " + e.getMessage());
+            return ApiResponse.failure(e);
         }
     }
 
     // DELETE /posts/{id} 📝 과제
-    public void deletePost(Long id) {
-        try {
-            postService.deletePost(id);
+    public ApiResponse<Void> deletePost(Long id) {
+       try {
+           postService.deletePost(id);
+           return ApiResponse.success();
         } catch (CustomException e) {
-            System.out.println("🚫 입력 오류: " + e.getMessage());
-        }
+            return ApiResponse.failure(e);
+       }
     }
 }
