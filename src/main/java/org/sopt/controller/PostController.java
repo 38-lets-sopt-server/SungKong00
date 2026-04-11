@@ -1,8 +1,10 @@
 package org.sopt.controller;
 
 import org.sopt.dto.request.CreatePostRequest;
+import org.sopt.dto.response.ApiResponse;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.exception.CustomException;
 import org.sopt.service.PostService;
 
 import java.util.List;
@@ -11,33 +13,49 @@ public class PostController {
     private final PostService postService = new PostService();
 
     // POST /posts
-    public CreatePostResponse createPost(CreatePostRequest request) {
+    public ApiResponse<CreatePostResponse> createPost(CreatePostRequest request) {
         try {
-            return postService.createPost(request);
-        } catch (IllegalArgumentException e) {
-            return new CreatePostResponse(null, "🚫 " + e.getMessage());
+            return ApiResponse.success(postService.createPost(request));
+        } catch (CustomException e) {
+            return ApiResponse.failure(e);
         }
     }
 
     // GET /posts 📝 과제
-    public List<PostResponse> getAllPosts() {
-        // TODO: postService.getAllPosts() 호출해서 반환
-        return null;
+    public ApiResponse<List<PostResponse>> getAllPosts() {
+        try {
+            return ApiResponse.success(postService.getAllPosts());
+        } catch (CustomException e) {
+            return ApiResponse.failure(e);
+        }
     }
 
     // GET /posts/{id} 📝 과제
-    public PostResponse getPost(Long id) {
-        // TODO: postService.getPost(id) 호출, 예외 발생 시 null 반환
-        return null;
+    public ApiResponse<PostResponse> getPost(Long id) {
+      try {
+            return ApiResponse.success(postService.getPost(id));
+        } catch (CustomException e) {
+            return ApiResponse.failure(e);
+        }
     }
 
     // PUT /posts/{id} 📝 과제
-    public void updatePost(Long id, String newTitle, String newContent) {
-        // TODO: postService.updatePost() 호출, 예외 발생 시 에러 메시지 출력
+    public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent) {
+        try {
+            postService.updatePost(id, newTitle, newContent);
+            return ApiResponse.success();
+        } catch (CustomException e) {
+            return ApiResponse.failure(e);
+        }
     }
 
     // DELETE /posts/{id} 📝 과제
-    public void deletePost(Long id) {
-        // TODO: postService.deletePost() 호출, 예외 발생 시 에러 메시지 출력
+    public ApiResponse<Void> deletePost(Long id) {
+       try {
+           postService.deletePost(id);
+           return ApiResponse.success();
+        } catch (CustomException e) {
+            return ApiResponse.failure(e);
+       }
     }
 }
