@@ -27,6 +27,10 @@ public class ApiResponse <T> {
         return new ApiResponse<>(true, ResponseCode.OK.getCode(), ResponseCode.OK.getMessage(), data);
     }
 
+    public static <T> ApiResponse<T> success(String message) {
+        return new ApiResponse<>(true, ResponseCode.OK.getCode(), message, null);
+    }
+
     public static ApiResponse<Void> success() {
         return new ApiResponse<>(true, ResponseCode.OK.getCode(), ResponseCode.OK.getMessage(), null);
     }
