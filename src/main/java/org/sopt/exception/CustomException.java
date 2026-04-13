@@ -1,5 +1,7 @@
 package org.sopt.exception;
 
+import org.sopt.dto.response.StatusCode;
+
 public class CustomException extends RuntimeException {
     private final BaseErrorCode errorCode;
 
@@ -13,11 +15,15 @@ public class CustomException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public BaseErrorCode getErrorCode() {
-        return errorCode;
+    public StatusCode getStatusCode() {
+        return errorCode.getStatusCode();
     }
 
-    public String getCode() {
-        return errorCode.getCode();
+    public String getDetailCode() {
+        return errorCode.getDetailCode();
+    }
+
+    public String getMessage() {
+        return super.getMessage();
     }
 }
