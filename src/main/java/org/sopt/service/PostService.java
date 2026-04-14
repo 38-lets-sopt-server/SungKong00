@@ -21,10 +21,10 @@ public class PostService {
     // 글쓰기 화면에서 "완료" 버튼을 누르면 이 메서드가 호출돼요
     public CreatePostResponse createPost(CreatePostRequest request) {
         try {
-            validateCreatePostRequest(request.getTitle(), request.getContent());
+            validateCreatePostRequest(request.title(), request.content());
 
             String createdAt = java.time.LocalDateTime.now().toString();
-            Post post = new Post(nextId++, request.getTitle(), request.getContent(), request.getAuthor(), createdAt);
+            Post post = new Post(nextId++, request.title(), request.content(), request.author(), createdAt);
 
             postRepository.save(post);
 
