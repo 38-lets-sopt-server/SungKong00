@@ -1,99 +1,11 @@
 package org.sopt;
-import org.sopt.dto.request.CreatePostRequest;
-import org.sopt.dto.response.ApiResponse;
-import org.sopt.dto.response.CreatePostResponse;
-import org.sopt.dto.response.PostResponse;
-import org.sopt.controller.PostController;
 
-import java.util.List;
-import java.util.Scanner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-        PostController postController = new PostController();
-        Scanner scanner = new Scanner(System.in);
-        boolean running = true;
-
-        while (running) {
-            System.out.println("\n=== 에브리타임 게시판 ===");
-            System.out.println("1. 게시글 작성");
-            System.out.println("2. 전체 조회");
-            System.out.println("3. 단건 조회");
-            System.out.println("4. 게시글 수정");
-            System.out.println("5. 게시글 삭제");
-            System.out.println("0. 종료");
-            System.out.print("메뉴 선택: ");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (choice) {
-                case 1:
-                    System.out.print("제목: ");
-                    String title = scanner.nextLine();
-                    System.out.print("내용: ");
-                    String content = scanner.nextLine();
-                    System.out.print("작성자: ");
-                    String author = scanner.nextLine();
-                    // 클라이언트가 요청 객체를 만들어서 Controller에 전달
-                    ApiResponse<CreatePostResponse> response = postController.createPost(
-                            new CreatePostRequest(title, content, author)
-                    );
-                    System.out.println(response.getMessage());
-                    break;
-
-                case 2:
-                    ApiResponse<List<PostResponse>> posts = postController.getAllPosts();
-                    if (!posts.isSuccess()) {
-                        System.out.println(posts.getMessage());
-                    } else {
-                        posts.getData().forEach(p -> System.out.println(p + "\n---"));
-                    }
-                    break;
-
-                case 3:
-                    System.out.print("조회할 게시글 ID: ");
-                    ApiResponse<PostResponse> post = postController.getPost(scanner.nextLong());
-                    scanner.nextLine();
-                    if (post.isSuccess()) System.out.println(post.getData());
-                    else System.out.println(post.getMessage());
-                    break;
-
-                case 4:
-                    System.out.print("수정할 게시글 ID: ");
-                    Long updateId = scanner.nextLong();
-                    scanner.nextLine();
-                    System.out.print("새 제목: ");
-                    String newTitle = scanner.nextLine();
-                    System.out.print("새 내용: ");
-                    String newContent = scanner.nextLine();
-
-                    ApiResponse<Void> updateResponse = postController.updatePost(updateId, newTitle, newContent);
-
-                    if (updateResponse.isSuccess()) System.out.println(updateResponse.getMessage());
-                    else System.out.println(updateResponse.getMessage());
-
-                    break;
-
-                case 5:
-                    System.out.print("삭제할 게시글 ID: ");
-                    scanner.nextLine();
-
-                    ApiResponse<Void> deleteResponse = postController.deletePost(scanner.nextLong());
-
-                    if (deleteResponse.isSuccess()) System.out.println(deleteResponse.getMessage());
-                    else System.out.println(deleteResponse.getMessage());
-                    break;
-
-                case 0:
-                    running = false;
-                    System.out.println("👋 프로그램 종료");
-                    break;
-
-                default:
-                    System.out.println("❗ 잘못된 입력입니다.");
-            }
-        }
-        scanner.close();
+        SpringApplication.run(Main.class, args);
     }
 }

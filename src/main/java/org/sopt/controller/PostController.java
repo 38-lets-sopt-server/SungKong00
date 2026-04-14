@@ -6,16 +6,21 @@ import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
 import org.sopt.exception.CustomException;
 import org.sopt.service.PostService;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/posts")
 public class PostController {
     private final PostService postService = new PostService();
 
     // POST /posts
+    @RequestMapping("/create")
     public ApiResponse<CreatePostResponse> createPost(CreatePostRequest request) {
         try {
-            return ApiResponse.success(postService.createPost(request));
+            return ApiResponse.success(postService.createPost(request),"✅ 게시글 등록 완료!");
         } catch (CustomException e) {
             return ApiResponse.failure(e);
         }

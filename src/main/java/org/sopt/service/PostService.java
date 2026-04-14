@@ -1,17 +1,20 @@
 package org.sopt.service;
 
+import lombok.RequiredArgsConstructor;
 import org.sopt.domain.Post;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
-import org.sopt.exception.CustomException;
 import org.sopt.exception.post.PostNotFoundException;
 import org.sopt.repository.PostRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static org.sopt.validator.PostValidator.validateCreatePostRequest;
 
+@Service
+@RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository = new PostRepository();
 
@@ -20,19 +23,17 @@ public class PostService {
     // CREATE ✅ 같이 구현
     // 글쓰기 화면에서 "완료" 버튼을 누르면 이 메서드가 호출돼요
     public CreatePostResponse createPost(CreatePostRequest request) {
-        try {
-            validateCreatePostRequest(request.title(), request.content());
 
-            String createdAt = java.time.LocalDateTime.now().toString();
-            Post post = new Post(nextId++, request.title(), request.content(), request.author(), createdAt);
+        validateCreatePostRequest(request.title(), request.content());
 
-            postRepository.save(post);
+        String createdAt = java.time.LocalDateTime.now().toString();
+        Post post = new Post(nextId++, request.title(), request.content(), request.author(), createdAt);
 
-        } catch (CustomException e) {
-            return new CreatePostResponse(null, "🚫 " + e.getMessage());
-        }
-        return new CreatePostResponse(nextId - 1, "✅ 게시글 등록 완료!");
+        postRepository.save(post);
+        return new CreatePostResponse(post.getId());
     }
+
+
 
     // READ - 전체 📝 과제
     // 자유게시판 목록 화면에서 호출돼요
@@ -48,22 +49,19 @@ public class PostService {
     // READ - 단건 📝 과제
     // 목록에서 특정 게시글을 탭하면 호출돼요 (게시글 상세 화면)
     public PostResponse getPost(Long id) {
-        Post post = postRepository.findById(id);
-        if (post == null) {
-            throw new PostNotFoundException(id);
-        }
+        Post post = postRepository.findById(id)
+                 .orElseThrow(() -> new PostNotFoundException(id));
             return new PostResponse(post);
     }
-
     // UPDATE 📝 과제
     // 게시글 수정 화면에서 "완료"를 누르면 호출돼요
     public void updatePost(Long id, String newTitle, String newContent) {
 
-        Post post = postRepository.findById(id);
-        if (post == null) {
-            throw new PostNotFoundException(id);
-        }
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
+
         validateCreatePostRequest(newTitle, newContent);
+
         post.update(newTitle, newContent);
     }
 
@@ -77,5 +75,4 @@ public class PostService {
             throw new PostNotFoundException();
         }
     }
-
 }
