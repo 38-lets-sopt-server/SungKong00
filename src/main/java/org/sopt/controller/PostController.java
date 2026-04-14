@@ -24,7 +24,8 @@ public class PostController {
     // GET /posts 📝 과제
     public ApiResponse<List<PostResponse>> getAllPosts() {
         try {
-            return ApiResponse.success(postService.getAllPosts());
+            List<PostResponse> posts = postService.getAllPosts();
+            return ApiResponse.success(posts);
         } catch (CustomException e) {
             return ApiResponse.failure(e);
         }

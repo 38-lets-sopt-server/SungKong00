@@ -1,6 +1,9 @@
 package org.sopt.exception;
 
+import org.sopt.dto.response.StatusCode;
+
 public interface BaseErrorCode {
-    String getCode();
+    StatusCode getStatusCode();
+    String getDetailCode();
     String getMessage();
 }

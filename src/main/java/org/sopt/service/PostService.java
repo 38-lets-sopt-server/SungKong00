@@ -4,6 +4,7 @@ import org.sopt.domain.Post;
 import org.sopt.dto.request.CreatePostRequest;
 import org.sopt.dto.response.CreatePostResponse;
 import org.sopt.dto.response.PostResponse;
+import org.sopt.exception.CustomException;
 import org.sopt.exception.post.PostNotFoundException;
 import org.sopt.repository.PostRepository;
 
@@ -20,14 +21,14 @@ public class PostService {
     // 글쓰기 화면에서 "완료" 버튼을 누르면 이 메서드가 호출돼요
     public CreatePostResponse createPost(CreatePostRequest request) {
         try {
-            validateCreatePostRequest(request.title, request.content);
+            validateCreatePostRequest(request.getTitle(), request.getContent());
 
             String createdAt = java.time.LocalDateTime.now().toString();
-            Post post = new Post(nextId++, request.title, request.content, request.author, createdAt);
+            Post post = new Post(nextId++, request.getTitle(), request.getContent(), request.getAuthor(), createdAt);
 
             postRepository.save(post);
 
-        } catch (IllegalArgumentException e) {
+        } catch (CustomException e) {
             return new CreatePostResponse(null, "🚫 " + e.getMessage());
         }
         return new CreatePostResponse(nextId - 1, "✅ 게시글 등록 완료!");
@@ -39,9 +40,6 @@ public class PostService {
 
         List<Post> posts = postRepository.findAll();
 
-        if (posts.isEmpty()) {
-            throw new PostNotFoundException();
-        }
         return posts.stream()
                 .map(PostResponse::new)
                 .toList();
@@ -52,7 +50,7 @@ public class PostService {
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id);
         if (post == null) {
-            throw new PostNotFoundException();
+            throw new PostNotFoundException(id);
         }
             return new PostResponse(post);
     }
@@ -63,8 +61,10 @@ public class PostService {
 
         Post post = postRepository.findById(id);
         if (post == null) {
-            throw new PostNotFoundException();
+            throw new PostNotFoundException(id);
         }
+        validateCreatePostRequest(newTitle, newContent);
+        post.update(newTitle, newContent);
     }
 
     // DELETE 📝 과제

@@ -1,21 +1,21 @@
 package org.sopt.dto.response;
 
-public enum ResponseCode {
+public enum StatusCode {
     OK("200", "성공"),
     BAD_REQUEST("400", "잘못된 요청"),
     NOT_FOUND("404", "찾을 수 없음"),
     INTERNAL_SERVER_ERROR("500", "서버 오류");
 
-    private final String code;
+    private final String statusCode;
     private final String message;
 
-    ResponseCode(String code, String message) {
-        this.code = code;
+    StatusCode(String statusCode, String message) {
+        this.statusCode = statusCode;
         this.message = message;
     }
 
-    public String getCode() {
-        return code;
+    public String getStatusCode() {
+        return statusCode;
     }
 
     public String getMessage() {
