@@ -1,4 +1,4 @@
-package org.sopt.domain;
+package org.sopt.domain.post.entity;
 
 public enum PostType {
     QUESTION("질문"),

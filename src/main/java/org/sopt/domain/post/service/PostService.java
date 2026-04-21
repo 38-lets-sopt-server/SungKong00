@@ -1,17 +1,17 @@
-package org.sopt.service;
+package org.sopt.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
-import org.sopt.domain.Post;
-import org.sopt.dto.request.CreatePostRequest;
-import org.sopt.dto.response.CreatePostResponse;
-import org.sopt.dto.response.PostResponse;
-import org.sopt.exception.post.PostNotFoundException;
-import org.sopt.repository.PostRepository;
+import org.sopt.domain.post.entity.Post;
+import org.sopt.domain.post.dto.request.CreatePostRequest;
+import org.sopt.domain.post.dto.response.CreatePostResponse;
+import org.sopt.domain.post.dto.response.PostResponse;
+import org.sopt.domain.post.exception.PostNotFoundException;
+import org.sopt.domain.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static org.sopt.validator.PostValidator.validateCreatePostRequest;
+import static org.sopt.domain.post.validator.PostValidator.validateCreatePostRequest;
 
 @Service
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
-package org.sopt.dto.response;
+package org.sopt.domain.post.dto.response;
 
-import org.sopt.domain.Post;
+import org.sopt.domain.post.entity.Post;
 
 // 게시글 조회 응답 (서버 → 클라이언트)
 // 게시글 조회 응답 (서버 → 클라이언트)

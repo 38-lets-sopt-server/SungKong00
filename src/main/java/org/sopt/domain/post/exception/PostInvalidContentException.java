@@ -1,6 +1,6 @@
-package org.sopt.exception.post;
+package org.sopt.domain.post.exception;
 
-import org.sopt.exception.CustomException;
+import org.sopt.global.exception.CustomException;
 
 public class PostInvalidContentException extends CustomException {
     public PostInvalidContentException() {
