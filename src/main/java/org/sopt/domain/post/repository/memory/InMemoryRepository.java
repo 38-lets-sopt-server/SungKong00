@@ -32,8 +32,11 @@ public class InMemoryRepository implements PostRepository {
 
     // Read All
     @Override
-    public List<Post> findAll() {
-        return postList;
+    public List<Post> findAll(int page, int size) {
+        return postList.stream()
+                .skip((long) page * size)
+                .limit(size)
+                .toList();
     }
 
     // Read by ID
@@ -46,9 +49,11 @@ public class InMemoryRepository implements PostRepository {
 
     // Read by BoardType
     @Override
-    public List<Post> findByBoardType(BoardType boardType) {
+    public List<Post> findByBoardType(BoardType boardType, int page, int size) {
         return postList.stream()
                 .filter(p->p.getBoardType() == boardType)
+                .skip((long) page * size)
+                .limit(size)
                 .toList();
     }
 

@@ -10,8 +10,8 @@ public interface PostRepository {
 
     Post save(Post post);
 
-    List<Post> findAll();
-    List<Post> findByBoardType(BoardType boardType);
+    List<Post> findAll(int page, int size);
+    List<Post> findByBoardType(BoardType boardType, int page, int size);
     Optional<Post> findById(Long id);
     boolean deleteById(Long id);
 }

@@ -32,9 +32,11 @@ public class PostController {
     // GET /posts (전체 조회/게시판 종류별 조회)
     @GetMapping
     public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(
-            @RequestParam(required = false) BoardType boardType
+            @RequestParam(required = false) BoardType boardType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<PostResponse> response = postService.getAllPosts(boardType);
+        List<PostResponse> response = postService.getAllPosts(boardType, page, size);
         return ApiResponse.success(GlobalSuccessCode.SUCCESS, response);
     }
 

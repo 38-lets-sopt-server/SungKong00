@@ -36,14 +36,14 @@ public class PostService {
 
 
     // READ - 전체 목록 /  게시판 종류별 조회
-    public List<PostResponse> getAllPosts(BoardType boardType) {
+    public List<PostResponse> getAllPosts(BoardType boardType, int page, int size) {
 
         List<Post> posts;
 
         if (boardType != null) {
-            posts = postRepository.findByBoardType(boardType);
+            posts = postRepository.findByBoardType(boardType, page, size);
         } else {
-            posts = postRepository.findAll();
+            posts = postRepository.findAll(page, size);
         }
 
         return posts.stream()
