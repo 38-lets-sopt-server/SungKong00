@@ -2,6 +2,7 @@ package org.sopt.domain.post.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
+import org.sopt.domain.post.entity.BoardType;
 import org.sopt.global.common.response.ApiResponse;
 import org.sopt.domain.post.dto.response.CreatePostResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
@@ -19,7 +20,7 @@ public class PostController {
     private final PostService postService;
 
     // POST /posts
-    @RequestMapping("/create")
+    @PostMapping("/create")
     public ResponseEntity<ApiResponse<CreatePostResponse>> createPost(
             @RequestBody CreatePostRequest request
     ) {
@@ -27,16 +28,20 @@ public class PostController {
          return ApiResponse.success(GlobalSuccessCode.CREATED, response);
     }
 
-    // GET /posts (전체 조회)
+    // GET /posts (전체 조회/게시판 종류별 조회)
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts() {
-        List<PostResponse> response = postService.getAllPosts();
+    public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(
+            @RequestParam(required = false) BoardType boardType
+    ) {
+        List<PostResponse> response = postService.getAllPosts(boardType);
         return ApiResponse.success(GlobalSuccessCode.SUCCESS, response);
     }
 
     // GET /posts/{id} (단건 조회)
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<PostResponse>> getPost(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<PostResponse>> getPost(
+            @PathVariable Long id
+    ) {
         PostResponse response = postService.getPost(id);
         return ApiResponse.success(GlobalSuccessCode.SUCCESS, response);
     }
@@ -54,7 +59,9 @@ public class PostController {
 
     // DELETE /posts/{id} (삭제)
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deletePost(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deletePost(
+            @PathVariable Long id
+    ) {
         postService.deletePost(id);
         return ApiResponse.success(GlobalSuccessCode.DLELETED);
     }

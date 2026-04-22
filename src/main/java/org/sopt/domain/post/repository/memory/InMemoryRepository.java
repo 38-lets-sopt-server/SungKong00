@@ -1,5 +1,6 @@
 package org.sopt.domain.post.repository.memory;
 
+import org.sopt.domain.post.entity.BoardType; // 추가된 import
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.repository.PostRepository;
 import org.springframework.stereotype.Repository;
@@ -12,9 +13,11 @@ import java.util.Optional;
 
 @Repository
 public class InMemoryRepository implements PostRepository {
-    final List<Post> postList = new ArrayList<>();
+    // 접근 제어자 private 추가 (외부 접근 완벽 차단)
+    private final List<Post> postList = new ArrayList<>();
     private Long nextId = 1L;
 
+    // Save
     @Override
     public Post save(Post post) {
 
@@ -27,11 +30,13 @@ public class InMemoryRepository implements PostRepository {
         return post;
     }
 
+    // Read All
     @Override
     public List<Post> findAll() {
         return postList;
     }
 
+    // Read by ID
     @Override
     public Optional<Post> findById(Long id) {
         return postList.stream()
@@ -39,6 +44,15 @@ public class InMemoryRepository implements PostRepository {
                 .findFirst();
     }
 
+    // Read by BoardType
+    @Override
+    public List<Post> findByBoardType(BoardType boardType) {
+        return postList.stream()
+                .filter(p->p.getBoardType() == boardType)
+                .toList();
+    }
+
+    // Delete by ID
     @Override
     public boolean deleteById(Long id) {
         return postList.removeIf(p -> p.getId().equals(id));

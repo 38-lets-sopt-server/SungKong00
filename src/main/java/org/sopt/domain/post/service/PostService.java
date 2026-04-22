@@ -1,6 +1,7 @@
 package org.sopt.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.response.CreatePostResponse;
@@ -25,7 +26,7 @@ public class PostService {
 
         String createdAt = java.time.LocalDateTime.now().toString();
 
-        Post post = new Post(request.title(), request.content(), request.author(), createdAt);
+        Post post = new Post(request.boardType() ,request.title(), request.content(), request.author(), createdAt);
 
         Post savedPost = postRepository.save(post);
 
@@ -33,10 +34,16 @@ public class PostService {
     }
 
 
-    // READ - 전체 목록
-    public List<PostResponse> getAllPosts() {
+    // READ - 전체 목록 /  게시판 종류별 조회
+    public List<PostResponse> getAllPosts(BoardType boardType) {
 
-        List<Post> posts = postRepository.findAll();
+        List<Post> posts;
+
+        if (boardType != null) {
+            posts = postRepository.findByBoardType(boardType);
+        } else {
+            posts = postRepository.findAll();
+        }
 
         return posts.stream()
                 .map(PostResponse::new)
@@ -49,6 +56,7 @@ public class PostService {
                  .orElseThrow(() -> new PostNotFoundException(id));
             return new PostResponse(post);
     }
+
     // UPDATE
     public void updatePost(Long id, String newTitle, String newContent) {
 

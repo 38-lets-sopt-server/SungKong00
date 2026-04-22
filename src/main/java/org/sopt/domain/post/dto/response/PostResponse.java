@@ -1,11 +1,12 @@
 package org.sopt.domain.post.dto.response;
 
+import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 
 // 게시글 조회 응답 (서버 → 클라이언트)
-public record PostResponse(Long id, String title, String content, String author, String createdAt) {
+public record PostResponse(Long id, BoardType boardType, String title, String content, String author, String createdAt) {
     public PostResponse(Post post) {
-        this(post.getId(), post.getTitle(), post.getContent(), post.getAuthor(), post.getCreatedAt());
+        this(post.getId(), post.getBoardType(), post.getTitle(), post.getContent(), post.getAuthor(), post.getCreatedAt());
     }
 
     @Override
