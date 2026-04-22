@@ -6,7 +6,7 @@ import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.response.CreatePostResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
 import org.sopt.domain.post.exception.PostNotFoundException;
-import org.sopt.domain.post.repository.PostRepository;
+import org.sopt.domain.post.repository.InMemoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import static org.sopt.domain.post.validator.PostValidator.validateCreatePostReq
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final PostRepository postRepository = new PostRepository();
+    private final InMemoryRepository postRepository;
 
     private Long nextId = 1L;
 

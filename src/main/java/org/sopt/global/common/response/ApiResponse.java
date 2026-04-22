@@ -31,6 +31,8 @@ public class ApiResponse<T> {
         return ResponseEntity.status(successCode.getHttpStatusCode()).body(response);
     }
 
+    //
+
     // --- Failure Factory Methods ---
 
     // BaseErrorCode을 이용해서 실패 응답을 만들 때

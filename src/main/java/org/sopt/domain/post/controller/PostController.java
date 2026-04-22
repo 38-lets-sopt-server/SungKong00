@@ -5,12 +5,10 @@ import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.global.common.response.ApiResponse;
 import org.sopt.domain.post.dto.response.CreatePostResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
-import org.sopt.global.exception.CustomException;
+import org.sopt.global.common.response.GlobalSuccessCode;
 import org.sopt.domain.post.service.PostService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {
-    private final PostService postService = new PostService();
+    private final PostService postService;
 
     // POST /posts
     @RequestMapping("/create")
@@ -26,45 +24,38 @@ public class PostController {
             @RequestBody CreatePostRequest request
     ) {
        CreatePostResponse response = postService.createPost(request);
-         return ResponseEntity.success().body(ApiResponse.success(response, "게시글이 성공적으로 생성되었습니다."));
+         return ApiResponse.success(GlobalSuccessCode.CREATED, response);
     }
 
-    // GET /posts 📝 과제
-    @RequestMapping("/all")
-    public ApiResponse<List<PostResponse>> getAllPosts() {
+    // GET /posts (전체 조회)
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts() {
         List<PostResponse> response = postService.getAllPosts();
-        return ApiResponse.success(response, "모든 게시글이 성공적으로 조회되었습니다.");
+        return ApiResponse.success(GlobalSuccessCode.SUCCESS, response);
     }
 
-    // GET /posts/{id} 📝 과제
-    @RequestMapping("/detail")
-    public ApiResponse<PostResponse> getPost(Long id) {
-      try {
-            return ApiResponse.success(postService.getPost(id));
-        } catch (CustomException e) {
-            return ApiResponse.failure(e);
-        }
+    // GET /posts/{id} (단건 조회)
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PostResponse>> getPost(@PathVariable Long id) {
+        PostResponse response = postService.getPost(id);
+        return ApiResponse.success(GlobalSuccessCode.SUCCESS, response);
     }
 
-    // PUT /posts/{id} 📝 과제
-    @RequestMapping("/update")
-    public ApiResponse<Void> updatePost(Long id, String newTitle, String newContent) {
-        try {
-            postService.updatePost(id, newTitle, newContent);
-            return ApiResponse.success();
-        } catch (CustomException e) {
-            return ApiResponse.failure(e);
-        }
+    // PUT /posts/{id} (수정)
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> updatePost(
+            @PathVariable Long id,
+            @RequestParam String newTitle,
+            @RequestParam String newContent
+    ) {
+        postService.updatePost(id, newTitle, newContent);
+        return ApiResponse.success(GlobalSuccessCode.UPDATED);
     }
 
-    // DELETE /posts/{id} 📝 과제
-    @RequestMapping("/delete")
-    public ApiResponse<Void> deletePost(Long id) {
-       try {
-           postService.deletePost(id);
-           return ApiResponse.success();
-        } catch (CustomException e) {
-            return ApiResponse.failure(e);
-       }
+    // DELETE /posts/{id} (삭제)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
+        return ApiResponse.success(GlobalSuccessCode.DLELETED);
     }
 }
