@@ -2,6 +2,7 @@ package org.sopt.domain.post.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
+import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
 import org.sopt.global.common.response.ApiResponse;
 import org.sopt.domain.post.dto.response.CreatePostResponse;
@@ -50,10 +51,9 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> updatePost(
             @PathVariable Long id,
-            @RequestParam String newTitle,
-            @RequestParam String newContent
-    ) {
-        postService.updatePost(id, newTitle, newContent);
+            @RequestBody UpdatePostRequest updateRequest
+            ) {
+        postService.updatePost(id, updateRequest);
         return ApiResponse.success(GlobalSuccessCode.UPDATED);
     }
 

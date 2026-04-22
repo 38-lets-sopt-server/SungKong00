@@ -1,6 +1,7 @@
 package org.sopt.domain.post.service;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
@@ -58,14 +59,14 @@ public class PostService {
     }
 
     // UPDATE
-    public void updatePost(Long id, String newTitle, String newContent) {
+    public void updatePost(Long id, UpdatePostRequest updateRequest) {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
 
-        validateCreatePostRequest(newTitle, newContent);
+        validateCreatePostRequest(updateRequest.newTitle(), updateRequest.newContent());
 
-        post.update(newTitle, newContent);
+        post.update(updateRequest.newTitle(), updateRequest.newContent());
     }
 
     // DELETE
