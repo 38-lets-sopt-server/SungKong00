@@ -15,6 +15,13 @@ public class Post {
         this.createdAt = createdAt;
     }
 
+    public Post(String title, String content, String author, String createdAt) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+        this.createdAt = createdAt;
+    }
+
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getContent() { return content; }
