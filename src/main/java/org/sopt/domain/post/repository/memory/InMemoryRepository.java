@@ -23,6 +23,9 @@ public class InMemoryRepository implements PostRepository {
 
         // Post엔티티와 Service가 InMemory의 예외적인 패턴에 영향 받지 않도록 ReflectionUtils를 사용하여 id 필드에 접근
         Field idField = ReflectionUtils.findField(Post.class, "id");    // 1. Post 클래스에서 "id" 필드 찾기
+        if (idField == null) {
+            throw new IllegalStateException("Post 클래스에 'id' 필드가 존재하지 않습니다.");
+        }
         ReflectionUtils.makeAccessible(idField);    // 2. 해당 필드에 접근할 수 있도록 설정 (private 필드도 접근 가능하게)
         ReflectionUtils.setField(idField, post, nextId++);  // 3. 찾은 필드에 post 객체의 id 값을 nextId로 설정하고, 이후 nextId를 1 증가
 
