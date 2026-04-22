@@ -21,7 +21,7 @@ public class PostController {
     private final PostService postService;
 
     // POST /posts
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ApiResponse<CreatePostResponse>> createPost(
             @RequestBody CreatePostRequest request
     ) {
