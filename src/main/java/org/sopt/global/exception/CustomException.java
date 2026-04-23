@@ -18,12 +18,4 @@ public class CustomException extends RuntimeException {
     public BaseErrorCode getErrorCode() {
         return errorCode;
     }
-
-    public String getDetailCode() {
-        return errorCode.getDetailCode();
-    }
-
-    public String getMessage() {
-        return super.getMessage();
-    }
 }

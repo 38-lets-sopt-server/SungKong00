@@ -65,6 +65,6 @@ public class PostController {
             @PathVariable Long id
     ) {
         postService.deletePost(id);
-        return ApiResponse.success(GlobalSuccessCode.DLELETED);
+        return ApiResponse.success(GlobalSuccessCode.DELETED);
     }
 }

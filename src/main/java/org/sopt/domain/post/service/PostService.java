@@ -11,6 +11,7 @@ import org.sopt.domain.post.exception.PostNotFoundException;
 import org.sopt.domain.post.repository.PostRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.sopt.domain.post.validator.PostValidator.validateCreatePostRequest;
@@ -25,7 +26,7 @@ public class PostService {
 
         validateCreatePostRequest(request.title(), request.content());
 
-        String createdAt = java.time.LocalDateTime.now().toString();
+        LocalDateTime createdAt = java.time.LocalDateTime.now();
 
         Post post = new Post(request.boardType() ,request.title(), request.content(), request.author(), createdAt);
 
@@ -64,9 +65,9 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
 
-        validateCreatePostRequest(updateRequest.newTitle(), updateRequest.newContent());
+        validateCreatePostRequest(updateRequest.Title(), updateRequest.Content());
 
-        post.update(updateRequest.newTitle(), updateRequest.newContent());
+        post.update(updateRequest.Title(), updateRequest.Content());
     }
 
     // DELETE

@@ -1,8 +1,4 @@
 package org.sopt.global.common.response;
 
-
-public interface BaseErrorCode {
-    int getHttpStatusCode();
-    String getDetailCode();
-    String getMessage();
+public interface BaseErrorCode extends BaseCode {
 }

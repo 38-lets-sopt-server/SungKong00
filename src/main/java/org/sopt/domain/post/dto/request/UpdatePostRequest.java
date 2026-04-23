@@ -1,6 +1,6 @@
 package org.sopt.domain.post.dto.request;
 
 public record UpdatePostRequest (
-        String newTitle,
-        String newContent) {
+        String Title,
+        String Content) {
 }
