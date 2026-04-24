@@ -65,18 +65,17 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
 
-        validateCreatePostRequest(updateRequest.Title(), updateRequest.Content());
+        validateCreatePostRequest(updateRequest.title(), updateRequest.content());
 
-        post.update(updateRequest.Title(), updateRequest.Content());
+        post.update(updateRequest.title(), updateRequest.content());
     }
 
     // DELETE
     public void deletePost(Long id) {
 
-        boolean deleted = postRepository.deleteById(id);
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new PostNotFoundException(id));
 
-        if (!deleted) {
-            throw new PostNotFoundException();
-        }
+        postRepository.delete(post);
     }
 }

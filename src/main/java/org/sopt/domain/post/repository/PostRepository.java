@@ -13,5 +13,5 @@ public interface PostRepository {
     List<Post> findAll(int page, int size);
     List<Post> findByBoardType(BoardType boardType, int page, int size);
     Optional<Post> findById(Long id);
-    boolean deleteById(Long id);
+    void delete(Post post);
 }

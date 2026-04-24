@@ -63,7 +63,7 @@ public class InMemoryRepository implements PostRepository {
 
     // Delete by ID
     @Override
-    public boolean deleteById(Long id) {
-        return postList.removeIf(p -> p.getId().equals(id));
+    public void delete(Post post) {
+        postList.remove(post);
     }
 }

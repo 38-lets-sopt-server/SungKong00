@@ -35,8 +35,7 @@ public class ApiResponse<T> {
 
     //  데이터가 없는 성공
     public static <T> ResponseEntity<ApiResponse<T>> success(BaseSuccessCode successCode) {
-        ApiResponse<T> response = new ApiResponse<>(successCode, null);
-        return ResponseEntity.status(successCode.getStatus()).body(response);
+        return success(successCode, null);
     }
 
     //
