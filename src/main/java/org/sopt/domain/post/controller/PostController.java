@@ -1,5 +1,6 @@
 package org.sopt.domain.post.controller;
 
+
 import lombok.RequiredArgsConstructor;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.request.UpdatePostRequest;
@@ -20,7 +21,7 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
-    // POST /posts
+    // POST /posts (생성)
     @PostMapping
     public ResponseEntity<ApiResponse<CreatePostResponse>> createPost(
             @RequestBody CreatePostRequest request

@@ -3,8 +3,10 @@ package org.sopt.domain.post.dto.response;
 import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 
+import java.time.LocalDateTime;
+
 // 게시글 조회 응답 (서버 → 클라이언트)
-public record PostResponse(Long id, BoardType boardType, String title, String content, String author, String createdAt) {
+public record PostResponse(Long id, BoardType boardType, String title, String content, String author, LocalDateTime createdAt) {
     public PostResponse(Post post) {
         this(post.getId(), post.getBoardType(), post.getTitle(), post.getContent(), post.getAuthor(), post.getCreatedAt());
     }
