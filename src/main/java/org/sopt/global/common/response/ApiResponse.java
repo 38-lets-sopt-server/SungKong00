@@ -1,6 +1,5 @@
 package org.sopt.global.common.response;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import org.sopt.global.exception.CustomException;
 import org.springframework.http.ResponseEntity;
 
