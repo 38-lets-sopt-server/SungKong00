@@ -1,6 +1,6 @@
 package org.sopt.domain.post.repository.memory;
 
-import org.sopt.domain.post.entity.BoardType; // 추가된 import
+import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.repository.PostRepository;
 import org.springframework.stereotype.Repository;
@@ -10,12 +10,13 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class InMemoryRepository implements PostRepository {
     // 접근 제어자 private 추가 (외부 접근 완벽 차단)
     private final List<Post> postList = new ArrayList<>();
-    private Long nextId = 1L;
+    private  final AtomicLong nextId = new AtomicLong(1L);
 
     // Save
     @Override
@@ -27,7 +28,7 @@ public class InMemoryRepository implements PostRepository {
             throw new IllegalStateException("Post 클래스에 'id' 필드가 존재하지 않습니다.");
         }
         ReflectionUtils.makeAccessible(idField);    // 2. 해당 필드에 접근할 수 있도록 설정 (private 필드도 접근 가능하게)
-        ReflectionUtils.setField(idField, post, nextId++);  // 3. 찾은 필드에 post 객체의 id 값을 nextId로 설정하고, 이후 nextId를 1 증가
+        ReflectionUtils.setField(idField, post, nextId.getAndIncrement());  // 3. 찾은 필드에 post 객체의 id 값을 nextId로 설정하고, 이후 nextId를 1 증가
 
         postList.add(post);
         return post;
