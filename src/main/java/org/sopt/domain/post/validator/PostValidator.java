@@ -1,6 +1,6 @@
-package org.sopt.validator;
+package org.sopt.domain.post.validator;
 
-import org.sopt.exception.post.PostInvalidContentException;
+import org.sopt.domain.post.exception.PostInvalidContentException;
 
 public class PostValidator {
 
