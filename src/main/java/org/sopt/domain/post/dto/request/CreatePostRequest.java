@@ -6,5 +6,6 @@ public record CreatePostRequest(
         BoardType boardType,
         String title,
         String content,
-        String author) {
+        Long userId
+) {
 }

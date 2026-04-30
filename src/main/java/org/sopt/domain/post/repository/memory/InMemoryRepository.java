@@ -3,6 +3,7 @@ package org.sopt.domain.post.repository.memory;
 import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.repository.PostRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ReflectionUtils;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
+@Profile("memory")
 public class InMemoryRepository implements PostRepository {
     // 접근 제어자 private 추가 (외부 접근 완벽 차단)
     private final List<Post> postList = new ArrayList<>();
