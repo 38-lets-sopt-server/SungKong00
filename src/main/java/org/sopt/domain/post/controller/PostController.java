@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
-import org.sopt.domain.post.entity.Post;
 import org.sopt.global.common.response.BaseResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
 import org.sopt.global.common.response.GlobalSuccessCode;

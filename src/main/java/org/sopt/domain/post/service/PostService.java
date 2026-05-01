@@ -5,7 +5,6 @@ import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
-import org.sopt.domain.post.dto.response.CreatePostResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
 import org.sopt.domain.post.exception.PostNotFoundException;
 import org.sopt.domain.post.repository.PostRepository;
