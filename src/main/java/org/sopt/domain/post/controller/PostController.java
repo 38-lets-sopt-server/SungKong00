@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.request.UpdatePostRequest;
@@ -14,6 +16,7 @@ import org.sopt.domain.post.dto.response.PostResponse;
 import org.sopt.global.common.response.GlobalSuccessCode;
 import org.sopt.domain.post.service.PostService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/posts")
 @RequiredArgsConstructor
+@Validated
 public class PostController {
     private final PostService postService;
 
@@ -43,10 +47,10 @@ public class PostController {
             @RequestParam(required = false) BoardType boardType,
 
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "page는 0 이상이어야 합니다.") int page,
 
             @Parameter(description = "페이지 당 데이터 수", example = "10")
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") @Positive(message = "size는 1 이상이어야 합니다.") int size
     ) {
         List<PostResponse> response = postService.getAllPosts(boardType, page, size);
         return BaseResponse.success(GlobalSuccessCode.SUCCESS, response);
@@ -81,7 +85,7 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Void>> deletePost(
             @Parameter(description = "삭제할 게시글의 ID", example = "1")
-            @PathVariable Long id
+            @PathVariable @Min(value = 1, message = "id는 1 이상이어야 합니다.") Long id
     ) {
         postService.deletePost(id);
         return BaseResponse.success(GlobalSuccessCode.DELETED);

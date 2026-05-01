@@ -22,4 +22,14 @@ public class UserJpaRepositoryAdapter implements UserRepository {
     public User save(User user) {
         return jpaRepository.save(user);
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return jpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByNickname(String nickname) {
+        return jpaRepository.existsByNickname(nickname);
+    }
 }

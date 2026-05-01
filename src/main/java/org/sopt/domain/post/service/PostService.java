@@ -6,10 +6,11 @@ import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.response.PostResponse;
-import org.sopt.domain.post.exception.PostNotFoundException;
+import org.sopt.domain.post.exception.PostErrorCode;
 import org.sopt.domain.post.repository.PostRepository;
 import org.sopt.domain.user.entity.User;
 import org.sopt.domain.user.service.UserService;
+import org.sopt.global.exception.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +54,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id)
-                 .orElseThrow(() -> new PostNotFoundException(id));
+                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
             return new PostResponse(post);
     }
 
@@ -62,7 +63,7 @@ public class PostService {
     public PostResponse updatePost(Long id, UpdatePostRequest updateRequest) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(id));
+                .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
 
 
         post.update(updateRequest.title(), updateRequest.content());
@@ -75,7 +76,7 @@ public class PostService {
     public void deletePost(Long id) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(id));
+                .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
 
         postRepository.delete(post);
     }
