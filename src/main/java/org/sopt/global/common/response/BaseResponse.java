@@ -3,21 +3,21 @@ package org.sopt.global.common.response;
 import org.sopt.global.exception.CustomException;
 import org.springframework.http.ResponseEntity;
 
-public class ApiResponse<T> {
+public class BaseResponse<T> {
 
     private final int status;
     private final String code;
     private final String message;
     private final T data;
 
-    private ApiResponse(BaseCode code, T data) {
+    private BaseResponse(BaseCode code, T data) {
         this.status = code.getStatusNumber();
         this.code = code.getCode();
         this.message = code.getMessage();
         this.data = data;
     }
 
-    private ApiResponse(BaseCode code, String customMessage, T data) {
+    private BaseResponse(BaseCode code, String customMessage, T data) {
         this.status = code.getStatusNumber();
         this.code = code.getCode();
         this.message = customMessage;
@@ -27,13 +27,13 @@ public class ApiResponse<T> {
         // --- Success Factory Methods ---
 
     // 데이터가 있는 성공 (ResponseEntity를 통째로 반환)
-    public static <T> ResponseEntity<ApiResponse<T>> success(BaseSuccessCode successCode, T data) {
-        ApiResponse<T> response = new ApiResponse<>(successCode, data);
+    public static <T> ResponseEntity<BaseResponse<T>> success(BaseSuccessCode successCode, T data) {
+        BaseResponse<T> response = new BaseResponse<>(successCode, data);
         return ResponseEntity.status(successCode.getStatus()).body(response);
     }
 
     //  데이터가 없는 성공
-    public static <T> ResponseEntity<ApiResponse<T>> success(BaseSuccessCode successCode) {
+    public static <T> ResponseEntity<BaseResponse<T>> success(BaseSuccessCode successCode) {
         return success(successCode, null);
     }
 
@@ -42,15 +42,15 @@ public class ApiResponse<T> {
     // --- Failure Factory Methods ---
 
     // BaseErrorCode을 이용해서 실패 응답을 만들 때
-    public static <T> ResponseEntity<ApiResponse<T>> failure(BaseErrorCode errorCode) {
-        ApiResponse<T> response = new ApiResponse<>(errorCode, null);
+    public static <T> ResponseEntity<BaseResponse<T>> failure(BaseErrorCode errorCode) {
+        BaseResponse<T> response = new BaseResponse<>(errorCode, null);
         return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
 
     // CustomException을 이용해서 실패 응답을 만들 때
-    public static <T> ResponseEntity<ApiResponse<T>> failure(CustomException exception) {
+    public static <T> ResponseEntity<BaseResponse<T>> failure(CustomException exception) {
         BaseErrorCode errorCode = exception.getErrorCode();
-        ApiResponse<T> response = new ApiResponse<>(errorCode, exception.getMessage(), null);
+        BaseResponse<T> response = new BaseResponse<>(errorCode, exception.getMessage(), null);
         return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
 
