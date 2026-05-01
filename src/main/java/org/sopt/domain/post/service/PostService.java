@@ -27,7 +27,7 @@ public class PostService {
 
     // CREATE
     @Transactional
-    public CreatePostResponse createPost(CreatePostRequest request) {
+    public PostResponse createPost(CreatePostRequest request) {
 
         validateCreatePostRequest(request.title(), request.content());
 
@@ -36,9 +36,7 @@ public class PostService {
         User user = userService.getUserById(request.userId());
         Post post = new Post(request.boardType(), request.title(), request.content(), user, createdAt);
 
-        Post savedPost = postRepository.save(post);
-
-        return new CreatePostResponse(savedPost.getId());
+        return new PostResponse( postRepository.save(post));
     }
 
 

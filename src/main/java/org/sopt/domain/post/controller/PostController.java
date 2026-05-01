@@ -10,7 +10,6 @@ import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
 import org.sopt.global.common.response.BaseResponse;
-import org.sopt.domain.post.dto.response.CreatePostResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
 import org.sopt.global.common.response.GlobalSuccessCode;
 import org.sopt.domain.post.service.PostService;
@@ -32,10 +31,10 @@ public class PostController {
             @ApiResponse(responseCode = "400", description = "유효하지 않은 내용 (제목/내용 누락 또는 길이 초과)")
     })
     @PostMapping
-    public ResponseEntity<BaseResponse<CreatePostResponse>> createPost(
+    public ResponseEntity<BaseResponse<PostResponse>> createPost(
             @RequestBody CreatePostRequest request
     ) {
-        CreatePostResponse response = postService.createPost(request);
+        PostResponse response = postService.createPost(request);
         return BaseResponse.success(GlobalSuccessCode.CREATED, response);
     }
 
