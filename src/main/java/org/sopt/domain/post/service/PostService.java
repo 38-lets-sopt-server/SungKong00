@@ -67,7 +67,7 @@ public class PostService {
 
     // UPDATE
     @Transactional
-    public void updatePost(Long id, UpdatePostRequest updateRequest) {
+    public PostResponse updatePost(Long id, UpdatePostRequest updateRequest) {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
@@ -75,6 +75,8 @@ public class PostService {
         validateCreatePostRequest(updateRequest.title(), updateRequest.content());
 
         post.update(updateRequest.title(), updateRequest.content());
+
+        return new PostResponse(postRepository.save(post));  // JPA의 영속성 컨텍스트 덕분에 사실 save() 안 해도 업데이트는 되지만, 인메모리에서는 save() 해줘야 업데이트가 반영된다.
     }
 
     // DELETE

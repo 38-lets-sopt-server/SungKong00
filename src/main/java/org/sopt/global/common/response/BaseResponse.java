@@ -37,7 +37,6 @@ public class BaseResponse<T> {
         return success(successCode, null);
     }
 
-    //
 
     // --- Failure Factory Methods ---
 

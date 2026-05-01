@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
+import org.sopt.domain.post.entity.Post;
 import org.sopt.global.common.response.BaseResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
 import org.sopt.global.common.response.GlobalSuccessCode;
@@ -75,14 +76,15 @@ public class PostController {
             @ApiResponse(responseCode = "404", description = "게시글을 찾을 수 없음")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse<Void>> updatePost(
+    public ResponseEntity<BaseResponse<PostResponse>> updatePost(
             @Parameter(description = "수정할 게시글의 ID", example = "1")
             @PathVariable Long id,
 
             @RequestBody UpdatePostRequest updateRequest
     ) {
-        postService.updatePost(id, updateRequest);
-        return BaseResponse.success(GlobalSuccessCode.UPDATED);
+        PostResponse post = postService.updatePost(id, updateRequest);
+
+        return BaseResponse.success(GlobalSuccessCode.UPDATED, post);
     }
 
     @Operation(summary = "게시글 삭제", description = "특정 게시글을 삭제합니다.")
