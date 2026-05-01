@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,16 @@ public class InMemoryRepository implements PostRepository {
         }
         ReflectionUtils.makeAccessible(idField);    // 2. 해당 필드에 접근할 수 있도록 설정 (private 필드도 접근 가능하게)
         ReflectionUtils.setField(idField, post, nextId.getAndIncrement());  // 3. 찾은 필드에 post 객체의 id 값을 nextId로 설정하고, 이후 nextId를 1 증가
+
+        // BaseTimeEntity의 createdAt이 비어 있으면 인메모리에서도 채워준다.
+        Field createdAtField = ReflectionUtils.findField(post.getClass().getSuperclass(), "createdAt");
+        if (createdAtField != null) {
+            ReflectionUtils.makeAccessible(createdAtField);
+            Object currentValue = ReflectionUtils.getField(createdAtField, post);
+            if (currentValue == null) {
+                ReflectionUtils.setField(createdAtField, post, LocalDateTime.now());
+            }
+        }
 
         postList.add(post);
         return post;

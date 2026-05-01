@@ -1,9 +1,11 @@
 package org.sopt.global.exception;
 
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.sopt.global.common.response.BaseResponse;
 import org.sopt.global.common.response.GlobalErrorCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,6 +19,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<BaseResponse<Void>> handleCustomException(CustomException e) {
         log.warn("CustomException 발생: {}", e.getMessage());
         return BaseResponse.failure(e);
+    }
+
+    // Bean Validation 예외 처리
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseResponse<List<String>>> handleValidationException(MethodArgumentNotValidException e) {
+        List<String> messages = e.getBindingResult().getFieldErrors().stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .toList();
+
+        return BaseResponse.failure(GlobalErrorCode.BAD_REQUEST, messages);
     }
 
     // 그 외의 예외 처리 (예: NullPointerException, IllegalArgumentException 등)

@@ -1,6 +1,8 @@
 package org.sopt.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
+import org.sopt.domain.user.dto.request.SignUpRequest;
+import org.sopt.domain.user.dto.response.UserResponse;
 import org.sopt.domain.user.entity.User;
 import org.sopt.domain.user.exception.UserNotFoundException;
 import org.sopt.domain.user.repository.UserRepository;
@@ -16,5 +18,13 @@ public class UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    public UserResponse signUp(SignUpRequest request) {
+        User user = new User(request.nickname(), request.email());
+
+        user = userRepository.save(user);
+
+        return new UserResponse(user.getId(), user.getNickname(), user.getEmail());
     }
 }

@@ -13,10 +13,7 @@ import org.sopt.domain.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.sopt.domain.post.validator.PostValidator.validateCreatePostRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -28,14 +25,10 @@ public class PostService {
     @Transactional
     public PostResponse createPost(CreatePostRequest request) {
 
-        validateCreatePostRequest(request.title(), request.content());
-
-        LocalDateTime createdAt = java.time.LocalDateTime.now();
-
         User user = userService.getUserById(request.userId());
-        Post post = new Post(request.boardType(), request.title(), request.content(), user, createdAt);
+        Post post = new Post(request.boardType(), request.title(), request.content(), user);
 
-        return new PostResponse( postRepository.save(post));
+        return new PostResponse(postRepository.save(post));
     }
 
 
@@ -71,7 +64,6 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(id));
 
-        validateCreatePostRequest(updateRequest.title(), updateRequest.content());
 
         post.update(updateRequest.title(), updateRequest.content());
 
