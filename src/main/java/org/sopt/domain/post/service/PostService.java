@@ -5,38 +5,36 @@ import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
 import org.sopt.domain.post.entity.Post;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
-import org.sopt.domain.post.dto.response.CreatePostResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
-import org.sopt.domain.post.exception.PostNotFoundException;
+import org.sopt.domain.post.exception.PostErrorCode;
 import org.sopt.domain.post.repository.PostRepository;
+import org.sopt.domain.user.entity.User;
+import org.sopt.domain.user.service.UserService;
+import org.sopt.global.exception.CustomException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.sopt.domain.post.validator.PostValidator.validateCreatePostRequest;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final UserService userService;
 
     // CREATE
-    public CreatePostResponse createPost(CreatePostRequest request) {
+    @Transactional
+    public PostResponse createPost(CreatePostRequest request) {
 
-        validateCreatePostRequest(request.title(), request.content());
+        User user = userService.getUserById(request.userId());
+        Post post = new Post(request.boardType(), request.title(), request.content(), user);
 
-        LocalDateTime createdAt = java.time.LocalDateTime.now();
-
-        Post post = new Post(request.boardType() ,request.title(), request.content(), request.author(), createdAt);
-
-        Post savedPost = postRepository.save(post);
-
-        return new CreatePostResponse(savedPost.getId());
+        return new PostResponse(postRepository.save(post));
     }
 
 
     // READ - 전체 목록 /  게시판 종류별 조회
+    @Transactional(readOnly = true)
     public List<PostResponse> getAllPosts(BoardType boardType, int page, int size) {
 
         List<Post> posts;
@@ -53,28 +51,32 @@ public class PostService {
     }
 
     // READ - 상세
+    @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id)
-                 .orElseThrow(() -> new PostNotFoundException(id));
+                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
             return new PostResponse(post);
     }
 
     // UPDATE
-    public void updatePost(Long id, UpdatePostRequest updateRequest) {
+    @Transactional
+    public PostResponse updatePost(Long id, UpdatePostRequest updateRequest) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(id));
+                .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
 
-        validateCreatePostRequest(updateRequest.title(), updateRequest.content());
 
         post.update(updateRequest.title(), updateRequest.content());
+
+        return new PostResponse(postRepository.save(post));  // JPA의 영속성 컨텍스트 덕분에 사실 save() 안 해도 업데이트는 되지만, 인메모리에서는 save() 해줘야 업데이트가 반영된다.
     }
 
     // DELETE
+    @Transactional
     public void deletePost(Long id) {
 
         Post post = postRepository.findById(id)
-                .orElseThrow(() -> new PostNotFoundException(id));
+                .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
 
         postRepository.delete(post);
     }

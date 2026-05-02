@@ -1,7 +1,8 @@
 package org.sopt.domain.post.entity;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "게시판 종류 (FREE: 자유, HOT: 인기, SECRET: 비밀)")
 public enum BoardType {
     FREE("자유게시판"),
     HOT("인기게시판"),

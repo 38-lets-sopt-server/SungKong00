@@ -7,7 +7,7 @@ public enum GlobalSuccessCode implements BaseSuccessCode{
     SUCCESS(HttpStatus.OK, "SUCCESS_200", "요청이 성공적으로 처리되었습니다."),
     CREATED(HttpStatus.CREATED, "SUCCESS_201", "성공적으로 생성/저장 되었습니다."),
     UPDATED(HttpStatus.OK, "SUCCESS_200", "성공적으로 수정되었습니다."),
-    DELETED(HttpStatus.NO_CONTENT, "SUCCESS_204", "성공적으로 삭제되었습니다.")
+    DELETED(HttpStatus.OK, "SUCCESS_200", "성공적으로 삭제되었습니다.")
     ;
 
 
