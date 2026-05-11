@@ -16,3 +16,16 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+server:
+  forward-headers-strategy: framework
+
+app:
+  cors:
+    allowed-origins:
+      - "http://localhost:3000"
+      - "https://sopt-38-castlekong.p-e.kr"
+    allow-credentials: false
+  swagger:
+    # 배포 환경에서 SWAGGER_SERVER_URL로 주입 권장 (예: https://sopt-38-castlekong.p-e.kr)
+    server-url: "https://sopt-38-castlekong.p-e.kr"
