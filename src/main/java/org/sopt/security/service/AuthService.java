@@ -89,6 +89,11 @@ public class AuthService {
         return TokenResponse.of(newAccessToken, newRefreshToken);
     }
 
+    @Transactional
+    public void logout(Long memberId) {
+        refreshTokenRepository.deleteByMemberId(memberId);
+    }
+
     public UserResponse getUserResponse(Long memberId) {
         // 인증된 id로 최신 회원 정보 조회
         User member = userRepository.findById(memberId)

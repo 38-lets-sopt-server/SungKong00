@@ -5,7 +5,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.sopt.domain.user.dto.response.UserResponse;
 import org.sopt.global.common.response.BaseResponse;
+import org.sopt.global.common.response.GlobalErrorCode;
 import org.sopt.global.common.response.GlobalSuccessCode;
+import org.sopt.global.exception.CustomException;
 import org.sopt.security.dto.request.LoginRequest;
 import org.sopt.security.dto.request.ReissueRequest;
 import org.sopt.security.dto.response.TokenResponse;
@@ -47,13 +49,31 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<BaseResponse<UserResponse>> me(Authentication authentication) {
 
-        if (authentication == null || authentication.getPrincipal() == null) {
-            throw new IllegalArgumentException("인증되지 않았습니다.");
-        }
-
-        Long memberId = Long.parseLong(authentication.getName());
+        // SecurityContext의 인증 id로 내 정보 조회
+        Long memberId = getAuthenticatedMemberId(authentication);
         UserResponse member = authService.getUserResponse(memberId);
 
         return BaseResponse.success(GlobalSuccessCode.SUCCESS, member);
+    }
+
+    @Operation(summary = "로그아웃 (Refresh Token 삭제)")
+    @PostMapping("/logout")
+    public ResponseEntity<BaseResponse<Void>> logout(Authentication authentication) {
+        authService.logout(getAuthenticatedMemberId(authentication));
+
+        return BaseResponse.success(GlobalSuccessCode.SUCCESS);
+    }
+
+    private Long getAuthenticatedMemberId(Authentication authentication) {
+        // 필터에서 넣은 principal 문자열을 Long id로 변환
+        if (authentication == null || authentication.getName() == null) {
+            throw new CustomException(GlobalErrorCode.UNAUTHORIZED);
+        }
+
+        try {
+            return Long.parseLong(authentication.getName());
+        } catch (NumberFormatException e) {
+            throw new CustomException(GlobalErrorCode.UNAUTHORIZED);
+        }
     }
 }
