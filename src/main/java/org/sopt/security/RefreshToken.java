@@ -41,7 +41,13 @@ public class RefreshToken {
     }
 
     public void rotate(String newToken, long expiresInSeconds) {
+        // 재발급 때 Refresh Token 교체
         this.token = newToken;
         this.expiresAt = LocalDateTime.now().plusSeconds(expiresInSeconds);
+    }
+
+    public boolean isExpired(LocalDateTime now) {
+        // now와 같거나 이전이면 만료
+        return !expiresAt.isAfter(now);
     }
 }
