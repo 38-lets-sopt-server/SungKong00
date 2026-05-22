@@ -22,6 +22,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String email;
 
+    // BCrypt로 암호화된 비밀번호
     @Column(nullable = false)
     private String password;
 
