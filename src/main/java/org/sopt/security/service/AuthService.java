@@ -6,9 +6,11 @@ import org.sopt.domain.user.entity.User;
 import org.sopt.domain.user.exception.UserErrorCode;
 import org.sopt.domain.user.repository.UserRepository;
 import org.sopt.global.exception.CustomException;
+import org.sopt.security.AccessTokenBlacklist;
 import org.sopt.security.RefreshToken;
 import org.sopt.security.dto.response.TokenResponse;
 import org.sopt.security.exception.AuthErrorCode;
+import org.sopt.security.repository.AccessTokenBlacklistRepository;
 import org.sopt.security.repository.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +25,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AccessTokenBlacklistRepository accessTokenBlacklistRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
@@ -90,7 +93,13 @@ public class AuthService {
     }
 
     @Transactional
-    public void logout(Long memberId) {
+    public void logout(Long memberId, String accessToken) {
+        // 로그아웃: 남은 Access Token 시간만큼 블랙리스트 보관
+        LocalDateTime expiresAt = jwtService.verifyAndGetExpiresAt(accessToken);
+        if (!accessTokenBlacklistRepository.existsByToken(accessToken)) {
+            accessTokenBlacklistRepository.save(AccessTokenBlacklist.of(accessToken, expiresAt));
+        }
+        // Refresh Token 삭제: 재발급 차단
         refreshTokenRepository.deleteByMemberId(memberId);
     }
 

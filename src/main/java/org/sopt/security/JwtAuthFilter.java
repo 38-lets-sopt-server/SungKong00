@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.sopt.security.repository.AccessTokenBlacklistRepository;
 import org.sopt.security.service.JwtService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import java.util.Collections;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final AccessTokenBlacklistRepository accessTokenBlacklistRepository;
 
     @Override
     protected void doFilterInternal(
@@ -31,18 +33,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith("Bearer ")) {
+            // Bearer 토큰만 꺼내서 검증
             String token = header.substring("Bearer ".length()).trim();
             try {
+                // 로그아웃된 Access Token이면 인증 처리 안 함
+                if (accessTokenBlacklistRepository.existsByToken(token)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
+                // JWT 검증 성공: SecurityContext에 회원 id 저장
                 Long memberId = jwtService.verifyAndGetMemberId(token);
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         String.valueOf(memberId), null, Collections.emptyList());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (IllegalArgumentException | JWTVerificationException e) {
-                // 유효하지 않은 토큰 또는 토큰이 없는 경우, 인증 없이 다음 필터로 넘겨요.
-                // 여기서 예외를 던지지 않는 이유는, /v1/login 같이 인증이 필요 없는 API도
-                // 이 필터를 거치기 때문이에요. 인증 여부 판단은 SecurityConfig의
-                // authorizeHttpRequests 설정에서 담당합니다.
+                // 잘못된 토큰: 인증 없이 통과, 최종 차단은 SecurityConfig가 처리
             }
         }
 

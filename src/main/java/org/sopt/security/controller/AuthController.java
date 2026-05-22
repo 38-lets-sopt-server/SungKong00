@@ -12,6 +12,7 @@ import org.sopt.security.dto.request.LoginRequest;
 import org.sopt.security.dto.request.ReissueRequest;
 import org.sopt.security.dto.response.TokenResponse;
 import org.sopt.security.service.AuthService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +59,12 @@ public class AuthController {
 
     @Operation(summary = "로그아웃 (Refresh Token 삭제)")
     @PostMapping("/logout")
-    public ResponseEntity<BaseResponse<Void>> logout(Authentication authentication) {
-        authService.logout(getAuthenticatedMemberId(authentication));
+    public ResponseEntity<BaseResponse<Void>> logout(
+            Authentication authentication,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization
+    ) {
+        // 로그아웃: 현재 Access Token 차단 + Refresh Token 삭제
+        authService.logout(getAuthenticatedMemberId(authentication), extractBearerToken(authorization));
 
         return BaseResponse.success(GlobalSuccessCode.SUCCESS);
     }
@@ -75,5 +80,13 @@ public class AuthController {
         } catch (NumberFormatException e) {
             throw new CustomException(GlobalErrorCode.UNAUTHORIZED);
         }
+    }
+
+    private String extractBearerToken(String authorization) {
+        // Authorization: Bearer xxx 형식만 허용
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            throw new CustomException(GlobalErrorCode.UNAUTHORIZED);
+        }
+        return authorization.substring("Bearer ".length()).trim();
     }
 }
