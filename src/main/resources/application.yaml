@@ -8,7 +8,7 @@ spring:
     password:
   h2:
     console:
-      enabled:true
+      enabled: true
   jpa:
     hibernate:
       ddl-auto: create
@@ -17,6 +17,11 @@ spring:
       hibernate:
         format_sql: true
 
+security:
+  jwt:
+    secret: ${JWT_SECRET:local-development-secret-change-before-deploy}
+    access-token-expires-in-seconds: 1800     # 30분
+    refresh-token-expires-in-seconds: 1209600 # 2주
 server:
   forward-headers-strategy: framework
 
@@ -27,5 +32,4 @@ app:
       - "https://sopt-38-castlekong.p-e.kr"
     allow-credentials: false
   swagger:
-    # 배포 환경에서 SWAGGER_SERVER_URL로 주입 권장 (예: https://sopt-38-castlekong.p-e.kr)
-    server-url: "https://sopt-38-castlekong.p-e.kr"
+    server-url: ${SWAGGER_SERVER_URL:}

@@ -31,7 +31,7 @@ public class UserService {
             throw new CustomException(UserErrorCode.USER_ALREADY_EXISTS, "이미 사용중인 닉네임입니다.");
         }
 
-        User user = new User(request.nickname(), request.email());
+        User user = new User(request.nickname(), request.email(), request.password());
 
         user = userRepository.save(user);
 

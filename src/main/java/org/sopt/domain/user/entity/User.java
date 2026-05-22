@@ -1,6 +1,7 @@
 package org.sopt.domain.user.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.sopt.global.common.entity.BaseTimeEntity;
 
 @Entity
@@ -8,6 +9,7 @@ import org.sopt.global.common.entity.BaseTimeEntity;
         @UniqueConstraint(columnNames = "email"),
         @UniqueConstraint(columnNames = "nickname")
 })  // "user"는 SQL 예약어라 테이블명을 "users"로 변경
+@Getter
 public class User extends BaseTimeEntity {
 
     @Id
@@ -20,22 +22,15 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     protected User() {}
 
-    public User(String nickname, String email) {
+    public User(String nickname, String email, String password) {
         this.nickname = nickname;
         this.email = email;
+        this.password = password;
     }
 
-    public Long getId() {
-        return this.id;
-    }
-
-    public String getNickname() {
-        return this.nickname;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
 }
