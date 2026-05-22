@@ -22,18 +22,18 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
 
-    // CREATE
+    // 게시글 생성: 요청 userId가 아니라 인증된 userId 사용
     @Transactional
-    public PostResponse createPost(CreatePostRequest request) {
+    public PostResponse createPost(Long userId, CreatePostRequest request) {
 
-        User user = userService.getUserById(request.userId());
+        User user = userService.getUserById(userId);
         Post post = new Post(request.boardType(), request.title(), request.content(), user);
 
         return new PostResponse(postRepository.save(post));
     }
 
 
-    // READ - 전체 목록 /  게시판 종류별 조회
+    // 게시글 목록: boardType 있으면 필터링, 없으면 전체 조회
     @Transactional(readOnly = true)
     public List<PostResponse> getAllPosts(BoardType boardType, int page, int size) {
 
@@ -50,7 +50,7 @@ public class PostService {
                 .toList();
     }
 
-    // READ - 상세
+    // 게시글 상세 조회
     @Transactional(readOnly = true)
     public PostResponse getPost(Long id) {
         Post post = postRepository.findById(id)
@@ -58,26 +58,37 @@ public class PostService {
             return new PostResponse(post);
     }
 
-    // UPDATE
+    // 게시글 수정: 작성자만 가능
     @Transactional
-    public PostResponse updatePost(Long id, UpdatePostRequest updateRequest) {
+    public PostResponse updatePost(Long userId, Long id, UpdatePostRequest updateRequest) {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
 
+        validateWriter(post, userId);
 
         post.update(updateRequest.title(), updateRequest.content());
 
-        return new PostResponse(postRepository.save(post));  // JPA의 영속성 컨텍스트 덕분에 사실 save() 안 해도 업데이트는 되지만, 인메모리에서는 save() 해줘야 업데이트가 반영된다.
+        // JPA는 save 없이도 반영되지만, 인메모리 저장소 호환용
+        return new PostResponse(postRepository.save(post));
     }
 
-    // DELETE
+    // 게시글 삭제: 작성자만 가능
     @Transactional
-    public void deletePost(Long id) {
+    public void deletePost(Long userId, Long id) {
 
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND, "게시글을 찾을 수 없습니다. id: " + id));
 
+        validateWriter(post, userId);
+
         postRepository.delete(post);
+    }
+
+    private void validateWriter(Post post, Long userId) {
+        // 인증된 회원과 게시글 작성자 비교
+        if (!post.isWrittenBy(userId)) {
+            throw new CustomException(PostErrorCode.POST_FORBIDDEN);
+        }
     }
 }

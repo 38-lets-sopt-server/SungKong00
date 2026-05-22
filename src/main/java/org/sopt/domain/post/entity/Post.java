@@ -37,7 +37,13 @@ public class Post extends BaseTimeEntity {
     public String getContent() { return content; }
     public User getUser() { return user; }
 
+    public boolean isWrittenBy(Long userId) {
+        // 작성자 확인: 수정/삭제 권한 체크용
+        return user != null && user.getId().equals(userId);
+    }
+
     public void update(String title, String content) {
+        // 게시글 내용 변경
         this.title = title;
         this.content = content;
     }

@@ -7,6 +7,7 @@ import org.sopt.domain.user.entity.User;
 import org.sopt.domain.user.exception.UserErrorCode;
 import org.sopt.domain.user.repository.UserRepository;
 import org.sopt.global.exception.CustomException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,16 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public User getUserById(Long id) {
+        // 내부 로직용 회원 조회
         return userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND, "유저를 찾을 수 없습니다. id: " + id));
     }
 
     @Transactional
     public UserResponse signUp(SignUpRequest request) {
-        // 중복 확인
+        // 회원가입 중복 확인
         if (userRepository.existsByEmail(request.email())) {
             throw new CustomException(UserErrorCode.USER_ALREADY_EXISTS, "이미 사용중인 이메일입니다.");
         }
@@ -31,7 +34,8 @@ public class UserService {
             throw new CustomException(UserErrorCode.USER_ALREADY_EXISTS, "이미 사용중인 닉네임입니다.");
         }
 
-        User user = new User(request.nickname(), request.email());
+        // 비밀번호는 BCrypt로 저장
+        User user = new User(request.nickname(), request.email(), passwordEncoder.encode(request.password()));
 
         user = userRepository.save(user);
 

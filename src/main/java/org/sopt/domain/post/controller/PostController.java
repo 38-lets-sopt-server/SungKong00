@@ -11,11 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.sopt.domain.post.dto.request.CreatePostRequest;
 import org.sopt.domain.post.dto.request.UpdatePostRequest;
 import org.sopt.domain.post.entity.BoardType;
+import org.sopt.global.common.response.GlobalErrorCode;
 import org.sopt.global.common.response.BaseResponse;
 import org.sopt.domain.post.dto.response.PostResponse;
 import org.sopt.global.common.response.GlobalSuccessCode;
 import org.sopt.domain.post.service.PostService;
+import org.sopt.global.exception.CustomException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +36,11 @@ public class PostController {
     @ApiResponse(responseCode = "201", description = "게시글 생성 성공")
     @PostMapping
     public ResponseEntity<BaseResponse<PostResponse>> createPost(
+            Authentication authentication,
             @Valid @RequestBody CreatePostRequest request
     ) {
-        PostResponse response = postService.createPost(request);
+        // 인증된 userId로 작성자 지정
+        PostResponse response = postService.createPost(getAuthenticatedUserId(authentication), request);
         return BaseResponse.success(GlobalSuccessCode.CREATED, response);
     }
 
@@ -71,12 +76,14 @@ public class PostController {
     @ApiResponse(responseCode = "200", description = "수정 성공")
     @PutMapping("/{id}")
     public ResponseEntity<BaseResponse<PostResponse>> updatePost(
+            Authentication authentication,
             @Parameter(description = "수정할 게시글의 ID", example = "1")
             @PathVariable Long id,
 
             @Valid @RequestBody UpdatePostRequest updateRequest
     ) {
-        PostResponse post = postService.updatePost(id, updateRequest);
+        // 수정 요청자 검증은 Service에서 처리
+        PostResponse post = postService.updatePost(getAuthenticatedUserId(authentication), id, updateRequest);
         return BaseResponse.success(GlobalSuccessCode.UPDATED, post);
     }
 
@@ -84,10 +91,25 @@ public class PostController {
     @ApiResponse(responseCode = "200", description = "삭제 성공")
     @DeleteMapping("/{id}")
     public ResponseEntity<BaseResponse<Void>> deletePost(
+            Authentication authentication,
             @Parameter(description = "삭제할 게시글의 ID", example = "1")
             @PathVariable @Min(value = 1, message = "id는 1 이상이어야 합니다.") Long id
     ) {
-        postService.deletePost(id);
+        // 삭제 요청자 검증은 Service에서 처리
+        postService.deletePost(getAuthenticatedUserId(authentication), id);
         return BaseResponse.success(GlobalSuccessCode.DELETED);
+    }
+
+    private Long getAuthenticatedUserId(Authentication authentication) {
+        // JwtAuthFilter가 넣은 회원 id 꺼내기
+        if (authentication == null || authentication.getName() == null) {
+            throw new CustomException(GlobalErrorCode.UNAUTHORIZED);
+        }
+
+        try {
+            return Long.parseLong(authentication.getName());
+        } catch (NumberFormatException e) {
+            throw new CustomException(GlobalErrorCode.UNAUTHORIZED);
+        }
     }
 }
