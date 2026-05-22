@@ -20,10 +20,6 @@ public record CreatePostRequest(
         @Schema(description = "게시글 내용 (2000자 이내)", example = "게시글 내용입니다.")
         @NotBlank(message = "내용은 필수입니다.")
         @Size(max = 2000, message = "내용은 2000자 이내로 작성해주세요.")
-        String content,
-
-        @Schema(description = "작성자 ID", example = "1")
-        @NotNull(message = "작성자 ID는 필수입니다.")
-        Long userId
+        String content
 ) {
 }
